@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-around",
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    borderColor: GlobalStyle.colors.grey,
+    borderColor: GlobalStyle.colors.border,
   },
   metricsInnerContainer: {
     flex: 2,
