@@ -1,20 +1,62 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import AppLoading from "expo-app-loading";
+import React, { useState } from "react";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { ConfigButton } from "./src/components/ConfigButton";
+import { useFonts } from "./src/hooks/useFonts";
+import { Home } from "./src/pages/Home";
+import { Recording } from "./src/pages/Recording";
+import { GlobalStyle } from "./src/styles/GlobalStyles";
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+const Stack = createNativeStackNavigator();
+
+declare global {
+  namespace ReactNavigation {
+    interface RootParamList {
+      Home: undefined;
+      Recording: undefined;
+      //Test: {userId: string} // se for passar parâmetros
+    }
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default function App() {
+  const [IsReady, SetIsReady] = useState<boolean>(false);
+
+  const LoadFonts = async () => {
+    await useFonts();
+  };
+
+  if (!IsReady) {
+    return (
+      <AppLoading
+        startAsync={LoadFonts}
+        onFinish={() => SetIsReady(true)}
+        onError={() => {}}
+      />
+    );
+  }
+  return (
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Group
+            screenOptions={{
+              title: "Pedalada",
+              headerBackTitle: "",
+              headerTintColor: GlobalStyle.colors.text_primary,
+              headerStyle: {
+                backgroundColor: GlobalStyle.colors.background_primary,
+              },
+              headerRight: () => <ConfigButton />,
+            }}
+          >
+            <Stack.Screen name='Home' component={Home} />
+            <Stack.Screen name='Recording' component={Recording} />
+          </Stack.Group>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
+  );
+}
